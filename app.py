@@ -1,4 +1,7 @@
 from flask import Flask, redirect, render_template, request, session, url_for
+from sqlalchemy import Column, create_engine, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 import sys
 import tweepy
 import time
@@ -13,6 +16,11 @@ app.config.update(
     consumer_key='o7vgHO8hRGPl62L9xokp76Fan',
     consumer_secret='DuBOE39WluGJeRdUtz3sXAN7pjPr4mtoaRJYe5IueIRaeOejID'
 )
+
+#setting SQLAlchemy engine
+engine = create_engine('sqlite:///:memory', echo=True)
+session_class = sessionmaker(bind=engine)
+session = session_class()
 
 class myExeption(Exception):
     pass
@@ -63,16 +71,31 @@ class Rottery:
         time.sleep(self.timer)
         stream.disconnect()
 
+#define SQLAlchemy Class
+class User(declarative_base()):
+    def __init__(self, user_id, screen_id):
+        self.__tablename__ = 'users'
+        self.id = Column(Integer, primary_key=True)
+        self.user_id = Column(Integer, primary_key=True)
+        self.screen_id = Column(String)
+        self.user_id = user_id
+        self.screen_id = screen_id
+
+
+class Status(User):
+    def __init__(self, user_id, screen_id, status_id):
+        status_id = Column(Integer, primary_key=True)
+        User.__init__(self, user_id, screen_id)
+        self.status_id = status_id
 
 
 @app.route('/')
 def my_render():
     if 'access_key' in session:
-        return render_template('twicake.html', auth_url=url_for('auth'),
-                access_status=True)
+        return render_template('twicake.html', access_status=True)
     else:
-        return render_template('twicake.html', auth_url=url_for('auth'),
-                access_status=False)
+        new_user = Status(
+        return render_template('twicake.html', access_status=False)
 
 
 @app.route('/auth')
