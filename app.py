@@ -12,9 +12,9 @@ app = Flask(__name__)
 
 
 #setting SQLAlchemy engine
-engine = create_engine('sqlite:///:memory', echo=True)
-session_class = sessionmaker(bind=engine)
-session = session_class()
+#engine = create_engine('sqlite:///:memory', echo=True)
+#session_class = sessionmaker(bind=engine)
+#session = session_class()
 
 class myExeption(Exception):
     pass
@@ -67,28 +67,29 @@ class Rottery:
         stream.disconnect()
 
 #define SQLAlchemy Class
-class User(declarative_base()):
-    def __init__(self, user_id, screen_id):
-        self.__tablename__ = 'users'
-        self.id = Column(Integer, primary_key=True)
-        self.user_id = Column(Integer, primary_key=True)
-        self.screen_id = Column(String)
-        self.user_id = user_id
-        self.screen_id = screen_id
+#class User(declarative_base()):
+#    def __init__(self, user_id, screen_id):
+#        self.__tablename__ = 'users'
+#        self.id = Column(Integer, primary_key=True)
+#        self.user_id = Column(Integer, primary_key=True)
+#        self.screen_id = Column(String)
+#        self.user_id = user_id
+#        self.screen_id = screen_id
 
 
-class Status(User):
-    def __init__(self, user_id, screen_id, status_id):
-        status_id = Column(Integer, primary_key=True)
-        User.__init__(self, user_id, screen_id)
-        self.status_id = status_id
+#class Status(User):
+#    def __init__(self, user_id, screen_id, status_id):
+#        status_id = Column(Integer, primary_key=True)
+#        User.__init__(self, user_id, screen_id)
+#        self.status_id = status_id
 
 @app.route('/')
 def my_render():
+    static_bootstrap = "templates/dist/css/bootstrap.min.css"
     if 'access_key' in session:
-        return render_template('twicake.html', access_status=True)
+        return render_template('twicake.html', access_status=True, bootstrap=static_bootstrap)
     else:
-        return render_template('twicake.html', access_status=False)
+        return render_template('twicake.html', access_status=False, bootstrap=static_bootstrap)
     return render_template(
         'twicake.html',
         access_status=('access_key' in session)

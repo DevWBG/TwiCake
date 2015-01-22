@@ -1,4 +1,5 @@
 from app import app
+from werkzeug.contrib.fixers import ProxyFix
 
-app.debug = True
-app.run(host='', port=8000)
+app.wsgi_app = ProxyFix(app.wsgi_app)
+app.run(debug=True)
